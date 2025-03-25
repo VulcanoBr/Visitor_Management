@@ -1,5 +1,6 @@
 class UnitsController < ApplicationController
 
+  before_action :authenticate_user!
   before_action :set_unit, only: [:show, :edit, :update, :destroy, :employees]
 
   def index

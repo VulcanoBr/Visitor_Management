@@ -1,5 +1,7 @@
 class VisitorsController < ApplicationController
 
+  before_action :authenticate_user!
+
   def new
     @visitor = Visitor.new
   end
