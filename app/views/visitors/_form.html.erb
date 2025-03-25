@@ -1,7 +1,7 @@
 <% visitor ||= Visitor.new %>
 <%= turbo_frame_tag "new_visitor_form" do %>
 
-  <div data-controller="webcam">
+  <div data-controller="webcam maskphone">
    
     <%= simple_form_for @visitor, url: visitors_path, data: { turbo: true, visitor_form_target: "form"}, html: { id: "visitor_form" } do |f| %>
        
@@ -10,16 +10,21 @@
           <%= f.input :cpf, label_html: { class: 'text-white' }, id: "visitor_cpf", input_html: { class: "form-control bg-secondary text-white" } %>
         </div>
         <div class="col-md-6">
-          <%= f.input :name, label_html: { class: 'text-white' }, wrapper_html: { class: 'text-white' }, input_html: { class: "form-control bg-secondary text-white" } %>
+          <%= f.input :name, label_html: { class: 'text-white' }, wrapper_html: { class: 'text-white' }, 
+              input_html: { class: "form-control bg-secondary text-white", placeholder: "Nome do visitante" } %>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-6">
-          <%= f.input :phone, label_html: { class: 'text-white' }, wrapper_html: { class: 'text-white' }, input_html: { class: "form-control bg-secondary text-white" } %>
+          <%= f.input :phone, label_html: { class: 'text-white' }, wrapper_html: { class: 'text-white' }, required: true,
+              input_html: { class: "form-control bg-secondary text-white", placeholder: "Telefone Celular",
+              maxlength: "15", "data-maskphone-target": "inputPhone", "data-action": "keyup->maskphone#addMaskToPhoneFields" } %>
         </div>
+
         <div class="col-md-6">
-          <%= f.input :company, label_html: { class: 'text-white' }, wrapper_html: { class: 'text-white' }, input_html: { class: "form-control bg-secondary text-white" } %>
+          <%= f.input :company, label_html: { class: 'text-white' }, wrapper_html: { class: 'text-white' }, 
+              input_html: { class: "form-control bg-secondary text-white", placeholder: "Nome da Empresa" } %>
         </div>
       </div>
 

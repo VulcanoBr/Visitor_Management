@@ -24,3 +24,6 @@ application.register('employee-search', EmployeeSearchController)
 
 import VisitorFormController from './visitor_form_controller'
 application.register('visitor-form', VisitorFormController)
+
+import MaskphoneController from './maskphone_controller'
+application.register('maskphone', MaskphoneController)
