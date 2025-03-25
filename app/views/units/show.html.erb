@@ -1,0 +1,18 @@
+
+<div class="container rounded bg-dark text-white p-4 mt-4">
+  <div class="row mb-3">
+
+    <p style="color: green"><%= notice %></p>
+
+    <%= render @unit %>
+
+    <div class="col-12 d-flex justify-content-end">
+      <%= link_to edit_unit_path(@unit), class: 'btn btn-sm btn-outline-light', title: "Editar", ata: { turbo_frame: "_top" } do %>
+                  <i class="bi bi-pencil-fill"></i>
+      <% end %>
+      <%= link_to units_path, class: 'btn btn-sm btn-outline-light ms-2', title: "Voltar", data: { turbo_frame: "_top" } do %>
+                  <i class="bi bi-reply-fill"></i>
+      <% end %>
+    </div>
+  </div>
+</div>

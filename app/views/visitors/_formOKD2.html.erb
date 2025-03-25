@@ -1,0 +1,121 @@
+<%= turbo_frame_tag "new_visitor_form" do %>
+ <%= simple_form_for @visitor, 
+    url: visitors_path,
+    data: { 
+        turbo: false,
+        controller: "visitor-form",
+        action: "ajax:success->visitor-form#onSuccess"
+      }, html: { id: "visitor_form" } do |f| %>
+    <%= f.input :name %>
+    <%= f.input :cpf %>
+    <%= f.input :phone %>
+    <%= f.input :company %>
+
+    <!-- Área para exibir a webcam -->
+    <div id="webcam-container" class="mb-3">
+      <div id="my_camera" style="width: 320px; height: 240px;"></div>
+      <button type="button" class="btn btn-primary mt-2" onclick="take_snapshot()">Capturar Foto</button>
+    </div>
+
+    <!-- Campo oculto para armazenar a foto capturada -->
+    <%= f.input :photo, as: :file, input_html: { id: "visitor_photo_file" }, label: "Foto do Visitante" %>
+
+    <!-- Área para exibir a foto capturada -->
+    <div id="results" class="mb-3">
+      <img id="captured_photo" src="#" alt="Foto Capturada" style="display: none; width: 320px; height: 240px;" />
+    </div>
+    <div class="modal-footer">
+        <!-- Botão para fechar o modal -->
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        
+        <!-- Botão para salvar -->
+        <%= f.button :submit, "Salvar", class:"btn btn-primary" %>
+      </div>
+
+  <% end %>
+<% end %>
+
+<script>
+  // Configura a webcam
+  Webcam.set({
+    width: 320,
+    height: 240,
+    image_format: 'jpeg',
+    jpeg_quality: 90
+  });
+  Webcam.attach('#my_camera');
+
+  // Função para capturar a foto
+  function take_snapshot() {
+    Webcam.snap(function(data_uri) {
+      // Exibe a foto capturada
+      document.getElementById('captured_photo').src = data_uri;
+      document.getElementById('captured_photo').style.display = 'block';
+
+      // Converte a foto base64 em um arquivo
+      const blob = dataURItoBlob(data_uri);
+      const file = new File([blob], "visitor_photo.jpg", { type: "image/jpeg" });
+
+      // Atualiza o campo de arquivo com a foto capturada
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      document.getElementById('visitor_photo_file').files = dataTransfer.files;
+    });
+  }
+
+  // Função para converter base64 em Blob
+  function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+      return new Blob([ab], { type: mimeString });
+  }
+
+ // Função para popular visitante na view visit
+document.addEventListener('DOMContentLoaded', function() {
+  const visitorForm = document.getElementById('visitor_form');
+  if (visitorForm) {
+    visitorForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Preenche os campos do formulário de visita
+          document.getElementById('visitor_id').value = data.id;
+          document.getElementById('visitor_cpf').innerText = data.cpf;
+          document.getElementById('visitor_name').innerText = data.name;
+          document.getElementById('visitor_phone').innerText = data.phone;
+          document.getElementById('visitor_company').innerText = data.company;
+          document.getElementById('visitor_photo').src = data.photo_url;
+          
+          // Exibe a seção de informações do visitante
+          document.getElementById('visitor_info').style.display = 'block';
+          
+          // Fecha o modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('visitorModal'));
+          
+          modal.hide();
+        }
+      })
+      .catch(error => {
+        console.error('Erro ao salvar visitante:', error);
+      });
+    });
+  }
+});
+  
+</script>

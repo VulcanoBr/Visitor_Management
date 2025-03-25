@@ -1,0 +1,25 @@
+
+
+    <%= simple_form_for(@position, wrapper: :vertical_form, html: { class: 'row g-3' }) do |f| %>
+
+      <div class="col-md-6">
+        <%= f.input :name,
+                    input_html: { class: 'form-control' },
+                    label_html: { class: 'form-label' },
+                    wrapper_html: { class: 'mb-3' },
+                    placeholder: 'Nome da unidade' %>
+      </div>
+
+      <div class="col-12">
+        <%= f.input :active,
+                    as: :boolean,
+                    wrapper_html: { class: 'form-check form-switch' },
+                    input_html: { class: 'form-check-input' },
+                    label_html: { class: 'form-check-label' } %>
+      </div>
+
+      <div class="col-12 d-flex justify-content-end">
+        <%= f.button :submit, class: 'btn btn-success' %>
+        <%= link_to 'Cancelar', positions_path, class: 'btn btn-secondary ms-2 mr-5' %>
+      </div>
+    <% end %>

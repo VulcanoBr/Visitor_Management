@@ -1,0 +1,13 @@
+<% @employees.each do |employee| %>
+  <li class="list-group-item" role="option"
+      data-autocomplete-value=<%= employee.id%>
+      data-id="<%= employee.id %>"
+      data-unit-id="<%= employee.unit_id %>"
+      data-department-id="<%= employee.department_id %>"
+      data-unit-name="<%= employee.unit&.name %>"
+      data-department-name="<%= employee.department&.name %>"
+      data-action="click->employee-search#selectResult"
+      id="employee-search-option-<%= employee.id %>" >
+    <%= employee.name %> - <%= employee.unit.name %> / <%= employee.department.name %>
+  </li>
+<% end %>

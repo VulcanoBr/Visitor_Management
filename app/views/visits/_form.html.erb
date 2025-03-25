@@ -1,0 +1,160 @@
+<div class="container bg-dark text-white p-4 rounded mt-4" data-controller="visitor-search ">
+  <h3 class="my-7, mb-3">Registrar Visita</h3>
+  <% flash.each do |key, value| %>
+    <div data-controller="flash-message" data-action="click->flash-message#removeMessage" id="flash-message" class="flash <%= key %> alert alert-danger bold text-black" data-flash-message-target="message"><%= value %></div>
+  <% end %>
+  <%= turbo_frame_tag "visit_form" do %>
+    <%= simple_form_for @visit,  data: { turbo: true }, html: { class: "needs-validation text-white" }  do |f| %>
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <div class="my-3 mb-3 me-2 d-inline-flex align-items-center">
+            <label for="cpf_search" class="form-label me-3" style="white-space: nowrap;">Pesquisar Visitante por CPF</label>
+            <%= text_field_tag :cpf_search, nil, class: "form-control me-2 bg-secondary text-white", placeholder: "Digite o CPF", 
+                data: { visitor_search_target: "cpf", action: "input->visitor-search#maskCPF" } %>
+            <button type="button" class="btn btn-secondary mt-2" data-action="visitor-search#search">Pesquisar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="visitor_id_field">
+        <%= f.input :visitor_id, as: :hidden, 
+            input_html: { 
+              id: "visitor_id", 
+              name: "visit[visitor_id]",
+              value: @visit&.visitor&.id, 
+              data: { visitor_search_target: "visitorId" } 
+            } 
+        %>
+      </div>
+      
+      <div id="visitor_info" class="mb-3" style="display: <%= @visit&.visitor.present? ? 'block' : 'none' %>" data-visitor-search-target="visitorInfo">
+        
+        <div class="card bg-secondary text-white">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <dl class="row mb-0">
+                  <dt class="col-sm-3">CPF:</dt>
+                  <dd class="col-sm-9" id="visitor_cpf" data-visitor-search-target="visitorCpf"><%= @visit&.visitor&.cpf %></dd>
+
+                  <dt class="col-sm-3">Nome:</dt>
+                  <dd class="col-sm-9" id="visitor_name" data-visitor-search-target="visitorName"><%= @visit&.visitor&.name %></dd>
+
+                  <dt class="col-sm-3">Telefone:</dt>
+                  <dd class="col-sm-9" id="visitor_phone" data-visitor-search-target="visitorPhone"><%= @visit&.visitor&.phone %></dd>
+
+                  <dt class="col-sm-3">Empresa:</dt>
+                  <dd class="col-sm-9" id="visitor_company" data-visitor-search-target="visitorCompany"><%= @visit&.visitor&.company %></dd>
+                </dl>
+              </div>
+              <div class="col-md-4 text-center">
+                
+                <%= image_tag @visit&.visitor&.photo&.attached? ? @visit.visitor.photo : ' ',
+                      id: "visitor_photo",
+                      class: "img-thumbnail",
+                      style: "width: 150px; height: 150px; object-fit: cover;",
+                      data: { visitor_search_target: "visitorPhoto" }
+                  %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="visitor_info_visibility"></div>
+      </div>
+
+      <div id="employee_search_section" style="display: <%= @visit&.visitor.present? ? 'block' : 'none' %>" 
+            data-visitor-search-target="employeeSearchSection">
+        <!-- Envolver tudo em uma div com o controlador -->
+        <div data-controller="employee-search"
+            data-employee-search-min-length-value="3"
+            data-employee-search-url-value="<%= search_employees_path %>">
+          
+          <div class="col-12 col-md-8">
+            <%= f.input :employee_id, required: true do %>
+              <div role="combobox">
+                <input type="text" 
+                      class="form-control bg-secondary text-white" 
+                      placeholder="Digite o nome do funcionário"
+                      autocomplete="off" 
+                      data-employee-search-target="input" 
+                      value="<%= f.object.employee&.name %>">
+                
+                <%= f.input_field :employee_id, as: :hidden, data: { employee_search_target: "hidden" } %>
+                <ul class="list-group" data-employee-search-target="results"></ul>
+                <%= f.full_error :employee, class: "mb-3" %>
+              </div>
+            <% end %>
+            <%= f.input_field :unit_id, as: :hidden, id: 'visit_unit_id', data: { employee_search_target: "unitId" } %>
+            <%= f.input_field :department_id, as: :hidden, id: 'visit_department_id', data: { employee_search_target: "departmentId" } %>
+          </div>
+
+          <!-- Campos de exibição para unidade e departamento agora dentro do escopo do controlador -->
+          <div class="row mt-3" id="employee_details">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label text-white">Unidade</label>
+                <input type="text" 
+                      class="form-control bg-secondary text-white" 
+                      id="unitName" 
+                      readonly 
+                      data-employee-search-target="unitName" 
+                      value="<%= f.object.employee&.unit&.name %>">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label text-white">Departamento</label>
+                <input type="text" 
+                      class="form-control bg-secondary text-white" 
+                      readonly 
+                      data-employee-search-target="departmentName" 
+                      value="<%= f.object.employee&.department&.name %>">
+              </div>
+            </div>
+          </div>
+        </div>
+      
+            
+        <div class="mt-4">
+          <%= link_to 'Cancelar', new_visit_path, class: "btn btn-secondary ms-2" %>
+          <%= f.button :submit, class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<!-- Modal para cadastro de visitante -->
+<div data-controller="visitor-form" >
+  <div id="visitor_info_visibility" >
+    <div class="modal fade" id="visitorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="visitorModalLabel" aria-hidden="true" data-visitor-form-target="visitorModal" >
+      <div class="modal-dialog" >
+        <div class="modal-content bg-dark text-white">
+          <div class="modal-header">
+            <h5 class="modal-title" id="visitorModalLabel">Cadastrar Visitante</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" ></button>
+          </div>
+          <div class="modal-body">
+            <%= render 'visitors/form', visitor: @visitor %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modal_close_action"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var flashMessage = document.getElementById('flash-message');
+    if (flashMessage) {
+      setTimeout(function() {
+        flashMessage.style.display = 'none';
+      }, 5000); // Remove the flash message after 5 seconds
+
+      document.addEventListener('click', function() {
+        flashMessage.style.display = 'none';
+      });
+    }
+  });
+</script> 

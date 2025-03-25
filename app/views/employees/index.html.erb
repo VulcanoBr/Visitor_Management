@@ -1,0 +1,78 @@
+<!-- app/views/employees/index.html.erb -->
+<div class="container rounded bg-dark text-white p-4 mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Funcionários</h1>
+        <%= link_to "Novo Funcionário", new_employee_path, class: "btn btn-primary" %>
+      </div>
+      
+        <% flash.each do |key, value| %>
+          <div data-controller="flash-message" data-action="click->flash-message#removeMessage" id="flash-message" class="flash <%= key %> alert alert-danger bold text-black" data-flash-message-target="message"><%= value %></div>
+        <% end %>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover align-middle">
+              <thead class="table-dark">
+                <tr>
+                  <th>Unidade</th>
+                  <th>Departamento</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Função</th>
+                  <th class="text-end">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @employees.each do |employee| %>
+                  <tr id="<%= dom_id(employee) %>">
+                    <td><%= employee.unit.name %></td>
+                    <td><%= employee.department.name %></td>
+                    <td><%= employee.name %></td>
+                    <td><%= employee.email %></td>
+                    <td><%= employee.position.name %></td>
+                    
+                    <td>
+                      <div class="d-flex justify-content-around">
+                        <%= link_to employee, class: "btn btn-sm btn-outline-light me-2", title: "Ver" do %>
+                          <i class="bi bi-eye"></i>
+                        <% end %>
+                      
+                      
+                        <%= link_to edit_employee_path(employee), class: "btn btn-sm btn-outline-light me-2", title: "Editar" do %>
+                          <i class="bi bi-pencil"></i>
+                        <% end %>
+                      
+                      
+                        <%= link_to employee, class: "btn btn-sm btn-outline-danger me-2", title: "Excluir", 
+                            data: { method: :delete, confirm: "Tem certeza que deseja excluir este funcionário?" } do %>
+                            <i class="bi bi-trash"></i>
+                        <% end %>
+
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var flashMessage = document.getElementById('flash-message');
+    if (flashMessage) {
+      setTimeout(function() {
+        flashMessage.style.display = 'none';
+      }, 5000); // Remove the flash message after 5 seconds
+
+      document.addEventListener('click', function() {
+        flashMessage.style.display = 'none';
+      });
+    }
+  });
+</script> 

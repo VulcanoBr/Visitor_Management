@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Management</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true, type: "module" %>
+  </head>
+
+  <body class=" d-flex flex-column">
+    <div class="page page-center">
+      <div class="container container-tight py-4">
+        <%= yield %>
+      </div>
+    </div>
+    <%= render "layouts/flash" %>
+  </body>
+</html>

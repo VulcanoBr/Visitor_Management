@@ -1,0 +1,48 @@
+<!-- app/views/departments/_form.html.erb -->
+<%= simple_form_for(@department, html: { class: "needs-validation" }) do |f| %>
+  <%= f.error_notification class: "alert alert-danger" %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  
+    <div class="card-body">
+      <div class="form-inputs">
+        <%= f.input :name, 
+                    label: "Nome do department", 
+                    input_html: { class: "form-control", autofocus: true }, 
+                    wrapper_html: { class: "mb-3" } %>
+        <%= f.input :description, 
+                    label: "Descrição do department", 
+                    input_html: { class: "form-control" }, 
+                    wrapper_html: { class: "mb-3" } %>
+                    
+        <div class="mb-3">
+          <label class="form-label">Selecione as units</label>
+          <div class="card border">
+            <div class="card-body">
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-3">
+                <% @units.each do |unit| %>
+                  <div class="col">
+                    <div class="form-check">
+                      <%= check_box_tag "department[unit_ids][]", unit.id, 
+                                      @department.unit_ids.include?(unit.id), 
+                                      id: "department_unit_ids_#{unit.id}", 
+                                      class: "form-check-input me-2" %>
+                      <%= label_tag "department_unit_ids_#{unit.id}", unit.name, class: "form-check-label" %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              <%= hidden_field_tag "department[unit_ids][]", nil %>
+            </div>
+          </div>
+          <div class="form-text">Selecione todas as units onde este department existe.</div>
+        </div>
+      </div>
+
+      <div class="form-actions d-flex gap-2">
+        <%= f.button :submit, class: "btn btn-primary" %>
+        <%= link_to "Cancelar", departments_path, class: "btn btn-secondary" %>
+      </div>
+    </div>
+  
+<% end %>

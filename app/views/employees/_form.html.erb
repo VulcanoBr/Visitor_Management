@@ -1,0 +1,59 @@
+<!-- app/views/employees/_form.html.erb -->
+<%= simple_form_for(@employee, html: { class: "needs-validation" }) do |f| %>
+
+  
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <%= f.input :name, 
+                      label: "Nome",
+                      input_html: { class: "form-control", autofocus: true }, 
+                      wrapper_html: { class: "mb-3" } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.input :email, 
+                      label: "Email",
+                      input_html: { class: "form-control" }, 
+                      wrapper_html: { class: "mb-3" } %>
+        </div>
+      </div>
+
+      
+
+      <div class="row">
+        <div class="col-md-6">
+          <%= f.association :unit, 
+                          label: "unit",
+                          collection: @units,
+                          prompt: "Selecione uma unit",
+                          input_html: { class: "form-select", data: { controller: "unit-select" } }, 
+                          wrapper_html: { class: "mb-3" } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.association :department, 
+                          label: "department",
+                          collection: @departments,
+                          prompt: "Selecione uma unit primeiro",
+                          input_html: { class: "form-select", disabled: @departments.blank? }, 
+                          wrapper_html: { class: "mb-3" } %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <%= f.association :position, 
+                          label: "position",
+                          collection: @positions,
+                          prompt: "Selecione uma position",
+                          input_html: { class: "form-select"}, 
+                          wrapper_html: { class: "mb-3" } %>
+        </div>
+      </div>
+
+      <div class="form-actions d-flex gap-2 mt-3">
+        <%= f.button :submit, class: "btn btn-primary" %>
+        <%= link_to "Cancelar", employees_path, class: "btn btn-secondary" %>
+      </div>
+    </div>
+  
+<% end %>

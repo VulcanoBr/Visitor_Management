@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <%= link_to root_path, class: "navbar-brand" do %>
+      <%= image_tag 'logo.svg', alt: 'Logo', style: 'height: 70px;' %>
+    <% end %>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <% if user_signed_in? && current_user.admin? %>
+          <li class="nav-item me-5">
+            <%= link_to "Units", units_path, class: "btn btn-primary fw-bold", style: "border-radius: 40px;" %>
+          </li>
+          <li class="nav-item me-5 ">
+            <%= link_to "Departments", departments_path, class: "btn btn-primary fw-bold", style: "border-radius: 40px;" %>
+          </li>
+          <li class="nav-item me-5">
+            <%= link_to "Positions", positions_path, class: "btn btn-primary fw-bold", style: "border-radius: 40px;" %>
+          </li>
+          <li class="nav-item me-5">
+            <%= link_to "Employees", employees_path, class: "btn btn-primary fw-bold", style: "border-radius: 40px;" %>
+          </li>
+        <% end %>
+
+        <% if user_signed_in? && (current_user.admin? || current_user.attendant?) %>
+          <li class="nav-item me-5">
+            <%= link_to "Visits", new_visit_path, class: "btn btn-primary fw-bold", style: "border-radius: 40px;" %>
+          </li>
+        <% end %>
+
+        <% if user_signed_in? %>
+          <%= button_to "Logout", destroy_user_session_path, method: :delete, style: "border-radius: 40px;", form: { class: "btn btn-danger d-inline" } %>
+          </li>
+        <% else%>
+          <li class="nav-item">
+            <%= button_to  "Login", new_user_session_path,  style: "border-radius: 40px;", form: { class: "btn btn-secondary d-inline fw-bold" } %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
